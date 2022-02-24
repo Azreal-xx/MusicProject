@@ -51,7 +51,7 @@ export default {
         const cookie = this.$root.cookie
         const _this = this
         _this.id = id
-        axios.get("http://localhost:3001/api/loginuserlist", { params: {
+        axios.get("https://cheshire-api.vercel.app/api/loginuserlist", { params: {
             id,
             cookie
         } })
@@ -79,12 +79,11 @@ export default {
             const cookie = this.$root.cookie
             const _this = this
             _this.id = id
-            axios.get("http://localhost:3001/api/loginuserlist", { params: {
+            axios.get("https://cheshire-api.vercel.app/api/loginuserlist", { params: {
                 id,
                 cookie
             } })
             .then(function(response) {
-                console.log(response)
                 _this.desc = response.data.playlist.description
                 _this.name = response.data.playlist.name
                 _this.playCount = response.data.playlist.playCount

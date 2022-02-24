@@ -71,7 +71,7 @@ export default {
         setMvpage(id) {
             const _this = this
             // 专门处理mv播放地址
-            axios.get("http://localhost:3000/mv/url", { params: {
+            axios.get("https://netease-cloud-music-api-seven-omega.vercel.app/mv/url", { params: {
                 id
             } })
             .then(function(response) {
@@ -83,7 +83,7 @@ export default {
             })
 
             // 处理mv具体信息
-            axios.get("http://localhost:3000/mv/detail", { params: {
+            axios.get("https://netease-cloud-music-api-seven-omega.vercel.app/mv/detail", { params: {
                 mvid: id,
             } })
             .then(function(response) {
@@ -94,7 +94,7 @@ export default {
             })
 
             // 处理mv的相关推荐
-            axios.get("http://localhost:3000/simi/mv", { params: {
+            axios.get("https://netease-cloud-music-api-seven-omega.vercel.app/simi/mv", { params: {
                 mvid: id,
             } })
             .then(function(response) {

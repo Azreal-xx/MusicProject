@@ -7,7 +7,7 @@
                 <span class="album">专辑</span>
                 <span class="dur">时长</span>
             </li>
-            <li v-for="(track, index) in tracks" class="infinite-list-item" :class="{ 'other-color': index % 2 === 0 }" :key="index">
+            <li v-for="(track, index) in tracks" @dblclick="playMusic(track.id)" class="infinite-list-item" :class="{ 'other-color': index % 2 === 0 }" :key="index">
                 <span class="index">{{ index + 1 }}</span>
                 <span class="song-name">
                     {{ track.name }}
@@ -25,6 +25,8 @@
 </template>
 
 <script>
+import { songlist } from "../../mixins/songlist"
+
 export default {
     data() {
         return {
@@ -35,18 +37,8 @@ export default {
     mounted(){
     },
     methods: {
-        load () {
-            this.count += 2
-        },
-        toMv(id) {
-            this.$router.push({
-                path: `/Playmv`,
-                query: {
-                    id
-                }
-            })
-        }
-    }
+    },
+    mixins :[songlist]
 }
 </script>
 
@@ -86,6 +78,7 @@ ul, li {
     .song-name {
         margin-left: 6.7%;
         height: 100%;
+        cursor: default;
     }
     span {
         line-height: 35px;
@@ -100,10 +93,13 @@ ul, li {
     width: 6.7%;
     display: block!important;
     text-align: center!important;
+    user-select: none;
 }
 .song-name {
     width: 38.6%;
     text-align: left;
+    cursor: default;
+    user-select: none;
 }
 .singer-name {
     width: 27.3%;

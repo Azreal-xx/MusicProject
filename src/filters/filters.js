@@ -76,10 +76,18 @@ let Otthprocessing = value => {
     return num;
 }
 
+// 注册毫秒转化为   分钟:秒数
+let formatTime = value => {
+    let minutes = Math.floor(value / 60)
+    let seconds = parseInt(value % 60)
+    return minutes + ":" + (seconds < 10 ? '0' : '') + seconds
+}
+
 export default {
     setTime,
     dateFormatdetailed,
     dateFormat,
     Singersname,
-    Otthprocessing
+    Otthprocessing,
+    formatTime
 }

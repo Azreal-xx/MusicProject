@@ -37,7 +37,7 @@ import axios from 'axios'
       created() {
         const _this  = this
         let { id } = this.$props
-        axios.get("http://localhost:3000/comment/playlist", { params: {
+        axios.get("https://netease-cloud-music-api-seven-omega.vercel.app/comment/playlist", { params: {
           id
         } })
         .then(function(response) {

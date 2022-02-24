@@ -1,10 +1,11 @@
 <template>
     <div class="pb-3 border-b divide-black divide-opacity-45">
         <div class="searchmore pl-7">
-            <input class="h-8 w-52 border rounded-full border-red-200 outline-none pl-3"
+            <i class="mdui-icon material-icons mr-4">arrow_back</i>
+            <input class="h-8 w-52 border rounded-full border-red-200 outline-none pl-4"
               @input="setKeyword($event)"
               placeholder="搜索"/>
-            <i class="material-icons" @click="toSearch(keyword)">search</i>
+            <i class="serach-icon material-icons" @click="toSearch(keyword)">search</i>
         </div>
         <div class="account">
             <i class="material-icons">notifications_none</i>
@@ -19,9 +20,7 @@
           :before-close="handleClose"
           >
           <div class="login-page">
-            <img src="https://patchwiki.biligame.com/images/blhx/f/f6/ehb9u3532mjbbl66his9ngs70b87ni6.png" />
             <img :src=qrimg />
-            <img src="https://patchwiki.biligame.com/images/blhx/f/f6/ehb9u3532mjbbl66his9ngs70b87ni6.png" />
           </div>
           <span class="tip">二维码还有:<span class="second">{{ totalTime }}</span>秒过期喵ヽ(=^･ω･^=)丿</span>
         </el-dialog>
@@ -58,13 +57,21 @@ export default {
           _this.totalTime--
           // 检测当前二维码扫描情况
           if( _this.flag ) {
-            axios.get("http://localhost:3000/login/qr/check", { params: {
+            axios.get("https://netease-cloud-music-api-seven-omega.vercel.app/login/qr/check", { params: {
               key: _this.unikey,
               time : new Date().getTime() 
             } })
             .then(function(response) {
               if( response.data.code === 803 ) {
-                  localStorage.setItem("Cookie", response.data.cookie)
+                  let cookieString = response.data.cookie + ""
+                  let NMTID = /NMTID=(.*?);/g
+                  let MUSIC = /MUSIC_U=(.*?);/g
+                  let csrf = /__csrf=(.*?);/g 
+                  NMTID = cookieString.match(NMTID)[0]
+                  MUSIC = cookieString.match(MUSIC)[0]
+                  csrf = cookieString.match(csrf)[0]
+                  let cookie = NMTID + " " + MUSIC + " " + csrf
+                  localStorage.setItem("Cookie", cookie)
                   _this.$message({
                     showClose: true,
                     message: "登陆成功喵ヽ(✿ﾟ▽ﾟ)ノ ",
@@ -81,17 +88,17 @@ export default {
             })
           }
           if( _this.totalTime <= 0 ) {
-            _this.clearInterval(clock)
+            _this.clearInterval(_this.clock)
           }
         }, 1000)
         // 请求登录key值
-        axios.get("http://localhost:3000/login/qr/key", { params: {
+        axios.get("https://netease-cloud-music-api-seven-omega.vercel.app/login/qr/key", { params: {
           time : new Date().getTime() 
         } })
         .then(function(response) {
           _this.unikey = response.data.data.unikey
           // 请求获取二维码当前状态
-          axios.get("http://localhost:3000/login/qr/create", { params: {
+          axios.get("https://netease-cloud-music-api-seven-omega.vercel.app/login/qr/create", { params: {
             key: _this.unikey,
             qrimg: true
           } })
@@ -117,7 +124,7 @@ export default {
       // 传入登陆成功返回的cookie进行用户信息的查询
       setUserinfo(cookie) {
         const _this = this
-        axios.get("http://localhost:3001/api/wyuserinfo", { params: {
+        axios.get("https://cheshire-api.vercel.app/api/wyuserinfo", { params: {
           cookie
         } })
         .then(function(response) {
@@ -158,9 +165,9 @@ export default {
   margin-top: 15px;
   display: flex;
   align-items: center;
-  i {
+  .serach-icon {
     position: absolute;
-    left: 200px;
+    left: 245px;
     &:hover {
       color: #54a0ff;
       cursor: pointer;
@@ -186,5 +193,9 @@ export default {
 }
 .v-modal {
   display: none;
+}
+.login-page {
+  display: flex;
+  justify-content: center;
 }
 </style>

@@ -29,7 +29,7 @@ export default {
     created() {
         const _this = this
         let id = this.$props.id
-        axios.get("http://localhost:3000/playlist/subscribers", { params: {
+        axios.get("https://netease-cloud-music-api-seven-omega.vercel.app/playlist/subscribers", { params: {
             id,
         } })
         .then(function(response) {

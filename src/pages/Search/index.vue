@@ -21,7 +21,7 @@ export default {
     created() {
         const _this = this
         const keywords = this.$route.query.keyword
-        axios.get("http://localhost:3000/search", { params: {
+        axios.get("https://netease-cloud-music-api-seven-omega.vercel.app/search", { params: {
             keywords
         } })
         .then(function(response) {
@@ -35,7 +35,7 @@ export default {
     methods: {
         setSearchpage(keywords) {
             const _this = this
-            axios.get("http://localhost:3000/search", { params: {
+            axios.get("https://netease-cloud-music-api-seven-omega.vercel.app/search", { params: {
                 keywords
             } })
             .then(function(response) {

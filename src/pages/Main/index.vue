@@ -45,7 +45,7 @@ export default {
         const _this = this
 
         // 获取首页banners
-        axios.get("http://localhost:3000/banner")
+        axios.get("https://netease-cloud-music-api-seven-omega.vercel.app/banner")
         .then(function(response) {
             _this.banner = {...response.data.banners}
         })
@@ -54,7 +54,7 @@ export default {
         })
 
         // 获取未登录情况下的推荐歌单
-        axios.get("http://localhost:3000/personalized?limit=8")
+        axios.get("https://netease-cloud-music-api-seven-omega.vercel.app/personalized?limit=8")
         .then(function(response) {
             _this.songlist = {...response.data.result}
         })
@@ -63,7 +63,7 @@ export default {
         })
 
         // 获取独家放送
-        axios.get("http://localhost:3000/personalized/privatecontent")
+        axios.get("https://netease-cloud-music-api-seven-omega.vercel.app/personalized/privatecontent")
         .then(function(response) {
             _this.longsonglist = {...response.data.result}
         })
@@ -72,7 +72,7 @@ export default {
         })
 
         // 获取新歌速递
-        axios.get("http://localhost:3000/top/song?type=96")
+        axios.get("https://netease-cloud-music-api-seven-omega.vercel.app/top/song?type=96")
         .then(function(response) {
             _this.Leftsonglist = {...response.data.data.slice(0, 4)}
             _this.Midsonglist = {...response.data.data.slice(4, 8)}
@@ -83,7 +83,7 @@ export default {
         })
 
         // 获取推荐Mv
-        axios.get("http://localhost:3000/personalized/mv")
+        axios.get("https://netease-cloud-music-api-seven-omega.vercel.app/personalized/mv")
         .then(function(response) {
             _this.Mvlist = {...response.data.result}
         })
@@ -98,7 +98,7 @@ export default {
 .mainpage {
     width: 100%;
     height: 100%;
-    padding: 50px 20px 120px 20px;
+    padding: 50px 20px 150px 20px;
     overflow: auto;
 }
 .first-title,.second-title,

@@ -7,6 +7,8 @@ import Playmv from '../pages/Playmv'
 import Search from '../pages/Search'
 
 export default new VueRouter({
+    mode: 'history',
+    base: process.env.BASE_URL,
     routes: [
         {
             path: "/",
@@ -33,6 +35,5 @@ export default new VueRouter({
                 }
             ]
         }
-    ],
-    mode: 'history'
+    ]
 })

@@ -80,7 +80,7 @@ export default {
     const { id, cookie } = this.$root
     const _this  = this
     // 获取用户收藏的歌单
-    axios.get("http://localhost:3001/api/wyusersonglist", { params: {
+    axios.get("https://cheshire-api.vercel.app/api/wyusersonglist", { params: {
       id,
       cookie
     } })

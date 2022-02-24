@@ -1,36 +1,150 @@
 <template>
     <div class="current-play">
-      <div class="info"><img src="https://upload.wikimedia.org/wikipedia/en/1/11/Dive_tycho_album.jpg"/>
+      <div class="progress-wrapper">
+        <!-- 时间显示 -->
+        <div class="progress-bar-wrapper"> 
+          <div class="progress-bar" ref="progressBar" @click="progressClick" >
+            <div class="bar-inner">
+              <div class="progress" ref="progress"></div>
+              <div class="progress-btn-wrapper" ref="progressBtn">
+                <div class="progress-btn"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info"><img :src="playPic"/>
         <div class="song">
-          <div class="name">Daydream</div>
-          <div class="artist">Tycho</div>
+          <div class="name">{{ playName }}</div>
+          <div class="artist">{{ playSingers }}</div>
         </div>
       </div>
       <div class="controls">
         <div class="repeat"><i class="material-icons">repeat</i></div>
         <div class="prev"><i class="material-icons">fast_rewind</i></div>
-        <div class="play"><i class="material-icons">play_arrow</i></div>
+        <div class="play" @click="changeAudiostate()" ><i class="material-icons">{{ audioState }}</i></div>
         <div class="next"><i class="material-icons">fast_forward</i></div>
         <div class="shuffle"><i class="material-icons">shuffle</i></div>
       </div>
-      <div class="volume"><i class="material-icons">volume_up        </i>
-        <div class="slider" role="slider">
-          <div class="slider__track-container">
-            <div class="slider__track"></div>
-          </div>
-          <div class="slider__thumb"></div>
+      <span class="time">{{currentDuration | formatTime}}</span>
+
+
+      <el-popover
+        placement="top"
+        width="160"
+        v-model="visible">
+        <el-progress type="dashboard" :percentage="percentage" :color="colors"></el-progress>
+        <div>
+          <el-button-group>
+            <el-button icon="el-icon-minus" @click="decrease"></el-button>
+            <el-button icon="el-icon-plus" @click="increase"></el-button>
+          </el-button-group>
         </div>
-      </div>
+        <el-button slot="reference"><i class="material-icons" slot="reference">volume_up</i></el-button>
+      </el-popover>
+
+    <audio 
+      class="audio" 
+      ref="audio" 
+      :src="playUrl" 
+      controls 
+      hidden="true"
+      @timeupdate="onTimeupdate"
+      @ended="audioEnd"
+    ></audio>
     </div>
 </template>
 
 <script>
 export default {
-    name: 'Player'
+    name: 'Player',
+    data() {
+      return{
+        playPic: 'https://p2.music.126.net/ctcIS8sSiIlEdR3YVKNDPA==/109951165264681853.jpg',
+        playSingers: 'Gaminl',
+        playName: 'Childhood Dreams',
+        playUrl: 'http://m7.music.126.net/20211231161753/c1e278c2c3fdda3aa01baed67d5ee397/ymusic/obj/w5zDlMODwrDDiGjCn8Ky/3735787096/dbb2/b63e/e560/1165982309d8feb1d7da755caa40ec56.mp3',
+        audioState: "play_arrow",
+        percent: 0,
+        currentTime: 0,
+        currentDuration: "0",
+        second: 30000,
+        percentage: 50,
+        colors: "#5F6EEF"
+      }
+    },
+    created() {
+      this.$refs.audio.volume = this.percentage / 100
+    },
+    methods: {
+      changeAudiostate() {
+        if(this.audioState === "play_arrow") {
+          this.$refs.audio.play()
+          this.audioState = "pause"
+        } else {
+          this.$refs.audio.pause()
+          this.audioState = "play_arrow"
+        }
+      },
+      onTimeupdate(e) {
+        this.currentTime = parseInt(e.target.currentTime)
+      },
+      audioEnd() {
+        
+      },
+      handle(val) {
+        // let s = (val % (1000 * 60)) / 1000
+        // let m = parseInt((val % (1000 * 60 * 60)) / (1000 * 60))
+        // let h = parseInt((val % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        this.currentDuration = val
+        this.percent = val * 1000 / this.second
+      },
+      progressClick(e) {
+        const rect = this.$refs.progressBar.getBoundingClientRect()
+        const offsetWidth = e.pageX - rect.left
+        this.$refs.progress.style.width = offsetWidth
+        this.$refs.progressBtn.style.left = offsetWidth
+        this.percent = offsetWidth / rect.width
+        this.$refs.audio.currentTime = this.second * this.percent / 1000
+      },
+      increase() {
+        this.percentage += 10;
+        if (this.percentage > 100) {
+          this.percentage = 100;
+        }
+        this.$refs.audio.volume = this.percentage / 100
+      },
+      decrease() {
+        this.percentage -= 10;
+        if (this.percentage < 0) {
+          this.percentage = 0;
+        }
+        this.$refs.audio.volume = this.percentage / 100
+      }
+    },
+    watch: {
+      "$store.state.playSinger"(newSinger, oldSinger) {
+        this.playSingers = newSinger
+        this.playPic = this.$store.getters.getplayPic
+        this.playUrl = this.$store.getters.getplayUrl
+        this.playName = this.$store.getters.getplayName
+        this.$refs.audio.play()
+        this.audioState = "pause"
+      },
+      percent(val) {
+        let value = parseInt(val * 100) + "%"
+        this.$refs.progress.style.width = value
+        this.$refs.progressBtn.style.left = parseInt(val * 100 - 1) + "%"
+      },
+      currentTime(val) {
+        this.handle(val)
+      }
+    }
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .left .controls .close,
 .left .controls .minimize,
 .left .controls .maximize {
@@ -179,6 +293,12 @@ export default {
   height: 25px;
   border-radius: 4px;
 }
+
+.artist, .name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
  .daily-mix .song .duration {
   width: 28px;
 }
@@ -223,6 +343,12 @@ export default {
  .current-play .info {
   display: flex;
 }
+
+.info {
+  width: 200px;
+  overflow: hidden;
+}
+
  .current-play img {
   width: 50px;
   height: 50px;
@@ -237,6 +363,9 @@ export default {
  .current-play .song .name {
   font-size: 16px;
   font-weight: bold;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  
 }
  .current-play .song .artist {
   margin-top: 3px;
@@ -315,5 +444,70 @@ export default {
   border: 2px solid #fff;
   box-shadow: 0px 0px 5px -1px #b2b2b2;
 }
+.progress-wrapper {
+  position: absolute;
+  top: -24px;
+  left: -1px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin: 0px auto;
+  padding: 10px 0;
+  .progress-bar-wrapper {
+    flex: 1;
+    margin-right: 5px;
+    .progress-bar {
+      height: 30px;
+      cursor: pointer;
+      .bar-inner {
+        position: relative;
+        top: 13px;
+        height: 4px;
+        background: rgba(238,229,255,1);
+        .progress {
+          position: absolute;
+          height: 100%;
+          background-color: #6B7AF2;
+        }
+        .progress-btn-wrapper {
+          position: absolute;
+          left: -8px;
+          top: -13px;
+          width: 30px;
+          height: 30px;
+          .progress-btn {
+            position: relative;
+            top: 7px;
+            left: 7px;
+            box-sizing: border-box;
+            width: 16px;
+            height: 16px;
+            border: 3px solid #fff;
+            border-radius: 50%;
+            background: #6B7AF2;
+          }
+        }
+      }
+    }
+  }
+  .time {
+    color: rgba(238, 229, 255, 1);
+    font-size: 12px;
+    width: 110px;
+    text-align: left;
+  }
+}
+.operators {
+  cursor: pointer;
+  text-align: center;
+  img{
+    vertical-align: middle;
+    margin: 0 20px;
+  }
+}
 
+.play {
+  cursor: pointer;
+  user-select: none;
+}
 </style>

@@ -4,6 +4,7 @@ import VueRouter from 'vue-router'
 import router from './router'
 import ElementUI from 'element-ui'
 import filter from './filters/filters'
+import store from './store'
 import VideoPlayer from 'vue-core-video-player'
 import 'element-ui/lib/theme-chalk/index.css'
 import './index.css'
@@ -30,5 +31,6 @@ new Vue({
     }
   },
   render: h => h(App),
-  router
+  router,
+  store
 })
